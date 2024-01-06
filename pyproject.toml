@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "ao3_track_cli"
+version = "0.1.0"
+description = ""
+authors = ["TrebbleBiscuit <TrebbleBiscuit@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+ao3-api = "^2.3.0"
+lxml = "^5.0.0"
+typer = "^0.9.0"
+questionary = "^2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
