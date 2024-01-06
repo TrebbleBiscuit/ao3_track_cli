@@ -85,8 +85,11 @@ def chapter_text_for_humans(chapter: AO3.Chapter) -> str:
     return out_str
 
 
-def get_work_id_from_user() -> str:
+def work_id_from_user_input(raw_input: str) -> str:
     """Solicit user input to get a work's ID
+
+    Args:
+        raw_input (str): URL or ID from user
 
     Raises:
         ValueError: Invalid user input
@@ -94,16 +97,13 @@ def get_work_id_from_user() -> str:
     Returns:
         str: AO3 Work ID
     """
-    new_work_from_user = questionary.text(
-        "Please enter the work's URL or ID.",
-        validate=lambda x: bool(x),
-    ).unsafe_ask()
-    if new_work_from_user.isdigit():
+
+    if raw_input.isdigit():
         # user directly provided work ID
-        work_id = new_work_from_user
-    elif "archiveofourown.org" in new_work_from_user:
+        work_id = raw_input
+    elif "archiveofourown.org" in raw_input:
         # user provided a url
-        work_id = AO3.utils.workid_from_url(new_work_from_user)
+        work_id = AO3.utils.workid_from_url(raw_input)
     else:
         raise ValueError("Must provide an AO3 URL or ID")
     return str(work_id)

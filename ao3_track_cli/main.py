@@ -2,14 +2,17 @@ from pathlib import Path
 from os import makedirs
 import os
 import logging
+from typing import Optional
+from typing_extensions import Annotated
 
 import AO3
 import questionary
+import typer
 
 from ao3_helpers import (
     write_human_readable_work_info,
     chapter_text_for_humans,
-    get_work_id_from_user,
+    work_id_from_user_input,
 )
 from track_metadata import MetadataFile
 from track_helpers import (
@@ -28,6 +31,7 @@ from constants import DATETIME_FORMAT, INTERRUPT_MSG
 
 DOWNLOAD_DIR = Path(__file__).parents[1] / "downloaded_works"
 
+app = typer.Typer()
 logger = logging.getLogger(__name__)
 
 
@@ -112,33 +116,55 @@ def select_work_and_act(all_works: list[Path]):
             logger.error("not implemented")
 
 
-def main():
+def interactive_mode():
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-    # print a list of all works
-    all_works = [Path(x) for x in os.scandir(DOWNLOAD_DIR) if x.is_dir()]
-    list_downloaded_works(all_works)
+    while True:
+        # print a list of all works
+        all_works = [Path(x) for x in os.scandir(DOWNLOAD_DIR) if x.is_dir()]
+        list_downloaded_works(all_works)
 
-    # what do you want to do?
-    selected_app_action = prompt_user_for_app_action()
-    match selected_app_action:
-        case AppAction.ADDNEWWORK:
-            work_id = get_work_id_from_user()
-            work = AO3.Work(work_id, load_chapters=False)
-            update_ao3_work(work)
-        case AppAction.UPDATEALL:
-            for index, folder_path in enumerate(all_works):
-                work_id = work_folder_to_id(folder_path.name)
-                work = AO3.Work(work_id, load_chapters=False)
-                update_ao3_work(work)
-        case AppAction.SELECTWORK:
-            select_work_and_act(all_works)
-        case AppAction.EXIT:
-            exit(0)
-        case _:
-            logger.error("not implemented")
+        # what do you want to do?
+        selected_app_action = prompt_user_for_app_action()
+        match selected_app_action:
+            case AppAction.ADDNEWWORK:
+                new_work_from_user = questionary.text(
+                    "Please enter the work's URL or ID.",
+                    validate=lambda x: bool(x),
+                ).unsafe_ask()
+                add_work(new_work_from_user)
+            case AppAction.UPDATEALL:
+                for index, folder_path in enumerate(all_works):
+                    work_id = work_folder_to_id(folder_path.name)
+                    work = AO3.Work(work_id, load_chapters=False)
+                    update_ao3_work(work)
+            case AppAction.SELECTWORK:
+                select_work_and_act(all_works)
+            case AppAction.EXIT:
+                exit(0)
+            case _:
+                logger.error("not implemented")
+
+
+@app.command()
+def add_work(work_id_or_url: str):
+    """Add a new AO3 work given its ID or URL
+
+    Args:
+        work_id_or_url (str)
+    """
+    work_id = work_id_from_user_input(work_id_or_url)
+    work = AO3.Work(work_id, load_chapters=False)
+    update_ao3_work(work)
+
+
+@app.callback(invoke_without_command=True)
+def main(ctx: typer.Context):
+    """AO3 track cli will run in interactive mode if no commands are provided"""
+    # this will ALWAYS be run which is why we do this check
+    if ctx.invoked_subcommand is None:
+        interactive_mode()
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    while True:
-        main()
+    app()
