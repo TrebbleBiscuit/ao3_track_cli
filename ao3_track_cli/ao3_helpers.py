@@ -57,7 +57,7 @@ def write_human_readable_work_info(work: AO3.Work, info_file_path: Path):
 
 
 def chapter_text_for_humans(chapter: AO3.Chapter) -> str:
-    """Turn an AO# chapter into human-readable plaintext to be written to file
+    """Turn an AO3 chapter into human-readable plaintext to be written to file
 
     Args:
         chapter (AO3.Chapter)
