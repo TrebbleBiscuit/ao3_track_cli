@@ -2,7 +2,6 @@
 
 from pathlib import Path
 import AO3
-import questionary
 
 
 def users_to_str(users: list[AO3.User]) -> str:

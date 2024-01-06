@@ -2,8 +2,6 @@ from pathlib import Path
 from os import makedirs
 import os
 import logging
-from typing import Optional
-from typing_extensions import Annotated
 
 import AO3
 import questionary
@@ -133,16 +131,23 @@ def interactive_mode():
                 ).unsafe_ask()
                 add_work(new_work_from_user)
             case AppAction.UPDATEALL:
-                for index, folder_path in enumerate(all_works):
-                    work_id = work_folder_to_id(folder_path.name)
-                    work = AO3.Work(work_id, load_chapters=False)
-                    update_ao3_work(work)
+                update_all()
             case AppAction.SELECTWORK:
                 select_work_and_act(all_works)
             case AppAction.EXIT:
                 exit(0)
             case _:
                 logger.error("not implemented")
+
+
+@app.command()
+def update_all():
+    """Update all downloaded works"""
+    all_works = [Path(x) for x in os.scandir(DOWNLOAD_DIR) if x.is_dir()]
+    for folder_path in all_works:
+        work_id = work_folder_to_id(folder_path.name)
+        work = AO3.Work(work_id, load_chapters=False)
+        update_ao3_work(work)
 
 
 @app.command()
