@@ -18,3 +18,11 @@ Without poetry
 
 - `pip install ao3-api questionary typer`
 - `python ao3_track_cli/main.py`
+
+### Non-interactive mode
+
+Running `main.py` with no arguments will run in interactive mode.
+
+`main.py --help` will show available commands.
+
+`main.py add-work --help` will show arguments for the `add-work` command.
