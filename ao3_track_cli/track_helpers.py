@@ -6,8 +6,8 @@ import logging
 import AO3
 import questionary
 
-from track_metadata import MetadataFile, MetadataFileParseError
-from constants import INTERRUPT_MSG
+from ao3_track_cli.track_metadata import MetadataFile, MetadataFileParseError
+from ao3_track_cli.constants import INTERRUPT_MSG
 
 logger = logging.getLogger(__name__)
 

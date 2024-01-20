@@ -7,7 +7,7 @@ import os
 
 import AO3
 
-from constants import DATETIME_FORMAT
+from ao3_track_cli.constants import DATETIME_FORMAT
 
 METADATA_FILENAME = ".ao3_track_cli_metadata.json"
 STALE_WORK_THRESHOLD = timedelta(days=365)

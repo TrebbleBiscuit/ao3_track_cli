@@ -7,13 +7,13 @@ import AO3
 import questionary
 import typer
 
-from ao3_helpers import (
+from ao3_track_cli.ao3_helpers import (
     write_human_readable_work_info,
     chapter_text_for_humans,
     work_id_from_user_input,
 )
-from track_metadata import MetadataFile
-from track_helpers import (
+from ao3_track_cli.track_metadata import MetadataFile
+from ao3_track_cli.track_helpers import (
     work_folder_to_name,
     work_folder_to_id,
     sanitize_path,
@@ -24,7 +24,7 @@ from track_helpers import (
     list_downloaded_works,
     mark_work_read,
 )
-from constants import DATETIME_FORMAT, INTERRUPT_MSG
+from ao3_track_cli.constants import DATETIME_FORMAT, INTERRUPT_MSG
 
 
 DOWNLOAD_DIR = Path(__file__).parents[1] / "downloaded_works"
@@ -33,7 +33,7 @@ app = typer.Typer()
 logger = logging.getLogger(__name__)
 
 
-def update_ao3_work(work: AO3.Work, always_update=False):
+def update_work(work: AO3.Work, always_update=False):
     """Check for updates to an AO3 work and update if necessary
 
     Args:
@@ -109,7 +109,7 @@ def select_work_and_act(all_works: list[Path]):
         case WorkAction.UPDATE:
             work_id = work_folder_to_id(selected_work.name)
             work = AO3.Work(work_id, load_chapters=False)
-            update_ao3_work(work)
+            update_work(work)
         case _:
             logger.error("not implemented")
 
@@ -147,7 +147,7 @@ def update_all():
     for folder_path in all_works:
         work_id = work_folder_to_id(folder_path.name)
         work = AO3.Work(work_id, load_chapters=False)
-        update_ao3_work(work)
+        update_work(work)
 
 
 @app.command()
@@ -159,7 +159,7 @@ def add_work(work_id_or_url: str):
     """
     work_id = work_id_from_user_input(work_id_or_url)
     work = AO3.Work(work_id, load_chapters=False)
-    update_ao3_work(work)
+    update_work(work)
 
 
 @app.callback(invoke_without_command=True)
