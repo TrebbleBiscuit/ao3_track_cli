@@ -9,13 +9,18 @@ An unofficial command line tool that interacts with Archive of Our Own (AO3)
 
 You'll need python, I'm using 3.10
 
-With [poetry](https://python-poetry.org/):
+Using the package
+- Grab the `.whl` from the releases page
+- `pip install path/to/.whl`
+- `python -m ao3_track_cli`
 
+With [poetry](https://python-poetry.org/):
+- Clone this repository
 - `poetry install`
 - `poetry run python ao3_track_cli/main.py`
 
 Without poetry
-
+- Clone this repository
 - `pip install ao3-api questionary typer`
 - `python ao3_track_cli/main.py`
 
